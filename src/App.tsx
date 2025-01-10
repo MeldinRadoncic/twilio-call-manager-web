@@ -28,10 +28,7 @@ const App: React.FC = () => {
             <UserButton />
           </div>
           <Call />
-          <button
-            onClick={() => signOut()}>
-            Sign Out
-          </button>
+          
         </SignedIn>
 
         {/* If the user is signed out, redirect to the sign-in page */}
