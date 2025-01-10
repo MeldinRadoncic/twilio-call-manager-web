@@ -4,7 +4,11 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import {FaPhone} from 'react-icons/fa'
+import {
+  FaPhone,
+  FaPhoneSlash,
+} from "react-icons/fa";
+import axios from "axios";
 import "./call.css";
 
 const keypadNumbers = [
@@ -25,6 +29,14 @@ const keypadNumbers = [
 const Call: React.FC = () => {
   const [phoneNumber, setPhoneNumber] =
     useState<string>("");
+  const [
+    activeCallSid,
+    setActiveCallSid,
+  ] = useState<string | null>(null);
+  const [
+    callConnection,
+    setCallConnection,
+  ] = useState<boolean>(false);
   const inputRef =
     useRef<HTMLInputElement>(null);
 
@@ -98,20 +110,50 @@ const Call: React.FC = () => {
   }, []);
 
   // Call action (validate phone number before proceeding)
-  const handleCall = () => {
-    if (
-      !phoneNumber ||
-      phoneNumber.length < 10
-    ) {
-      alert(
-        "Please enter a valid phone number",
+  const handleCall = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/call",
+        {
+          phoneNumber,
+        },
       );
-      return;
+
+      if (response.data.success) {
+        setActiveCallSid(
+          response.data.callSid,
+        );
+        setCallConnection(true);
+      }
+    } catch (e: any) {
+      console.log(e.message);
+      setCallConnection(false);
     }
-    console.log(
-      `Calling: ${phoneNumber}`,
-    );
-    // Add actual call logic here
+  };
+
+  const handleHangUp = async () => {
+    if (activeCallSid) {
+      try {
+        const response =
+          await axios.post(
+            "http://localhost:5000/hangup",
+            {
+              callSid: activeCallSid, // Pass the stored CallSid
+            },
+          );
+
+        if (response.data.success) {
+          setCallConnection(false);
+        }
+      } catch (e: any) {
+        console.log(e.message);
+        setCallConnection(false);
+      }
+    } else {
+      console.log(
+        "No active call to hang up",
+      );
+    }
   };
 
   return (
@@ -124,6 +166,7 @@ const Call: React.FC = () => {
       <input
         type='tel'
         ref={inputRef}
+        name='phoneNumber'
         value={phoneNumber}
         className='phone-input'
         placeholder='Enter number'
@@ -144,11 +187,19 @@ const Call: React.FC = () => {
           </button>
         ))}
       </div>
-      <button
-        className='call-button'
-        onClick={handleCall}>
-        <FaPhone color='white' size={24}/>
-      </button>
+      {callConnection ? (
+        <button
+          className='call-button-hangup'
+          onClick={handleHangUp}>
+          <FaPhone />
+        </button>
+      ) : (
+        <button
+          className='call-button'
+          onClick={handleCall}>
+          <FaPhone />
+        </button>
+      )}
     </div>
   );
 };
