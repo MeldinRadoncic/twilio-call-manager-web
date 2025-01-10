@@ -67,9 +67,25 @@
     background: #4caf50;
     border: none;
     color: white;
-    font-size: 24px;
-    font-weight: bold;
     display: flex;
+    font-size:24px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .call-button-hangup {
+    margin-top: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: red;
+    border: none;
+    color: white;
+    display: flex;
+    font-size:24px;
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -77,10 +93,7 @@
     transition: transform 0.2s, box-shadow 0.2s;
   }
   
-  .call-button:active {
-    transform: scale(0.95);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
+
   
   .call-button:hover {
     background: #45a045;
